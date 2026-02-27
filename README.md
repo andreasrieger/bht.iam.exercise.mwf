@@ -9,18 +9,13 @@ See license conditions for ractive: https://github.com/ractivejs/ractive/blob/de
 Make sure that Node.js and npm are installed; see: https://docs.npmjs.com/downloading-and-installing-node-js-and-npm
 
 # Supported versions
-The project has been built and run with the following recent versions of node and npm on Mac (x86, Big Sur) and Windows 11:
-- node v22.14.0 (LTS)
-- node v23.7.0
-With node v22 on MacOS there were issues that could be solved by prompting npm to update two packages (see below). On Windows, these or other issues did not occur with any of the two versions.
+The project has been built and run with the following recent versions of node and npm on Mac (x86, Tahoe, 26.3):
+- node v24.14.0
+- npm 11.9.0
 
 # Install dependencies
 - In the project directory, run: npm install
-- If you use node v22 on MacOS, additionally run the following two commands:
-  - npm update --save webpack
-  - npm update --save webpack-dev-server 
-  
-The reported vulnerability issues refer to issues of the development tools for building the application, not to the application itself.
+- The reported vulnerability issues refer to issues of the development tools for building the application, not to the application itself.
 
 # Development Run
 In the project directory, run: npm run serve
