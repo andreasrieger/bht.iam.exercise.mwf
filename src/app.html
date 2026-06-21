@@ -13,12 +13,13 @@
          and placed next to the copy of this file in the dist directory -->
     <link rel="stylesheet" href="app-style.bundle.min.css"/>
     <!-- TODO: comment-in if mapviews shall be used. It seems that libs and css need to be accessed online rather than be provided locally, there is also some issue when using leaflet+offline manifest...
+            -->
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
           integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
           crossorigin=""/>
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
             integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
-            crossorigin=""></script> -->
+            crossorigin=""></script>
     <!-- framework + application js resources (also shown as not available, see above) -->
     <script type="module" src="app-js.bundle.min.js"></script>
 </head>
@@ -26,9 +27,151 @@
 <body data-mwf-application="MyApplication" class="mwf-loading-app">
 
 <!-- TODO-REPEATED: add new views here -->
-<div class="mwf-view mwf-view-initial" data-mwf-viewcontroller="MyInitialViewController">
+<div class="mwf-view" data-mwf-viewcontroller="MyInitialViewController">
+    <header>
+        Header
+    </header>
+    <main class="mwf-scrollview">
+        Body
+    </main>
+    <footer>Footer</footer>
 </div>
 
+<!--List view-->
+<div class="mwf-view mwf-view-initial" id="mediaOverview" data-mwf-viewcontroller="ListviewViewController" data-mwf-templatename="mediaOverviewTemplate">
+    <header>
+        <button class="mwf-imgbutton mwf-img-sandwich mwf-left-align">Menu</button>
+        <h1 class="mwf-left-align">Medien</h1>
+        <button class="mwf-imgbutton mwf-img-plus mwf-right-align" id="addNewMediaItem" on-click="createItem">Add
+        </button>
+    </header>
+    <main class="mwf-scrollview">
+        <ul class="mwf-listview" data-mwf-listitem-view="myapp-listitem" data-mwf-listitem-menu="myapp-mediaItemMenu">
+            <li class="mwf-listitem mwf-li-title-subtitle mwf-template mwf-databind"
+                data-mwf-templatename="myapp-listitem" data-mwf-targetview="mediaReadview">
+                <img class="mwf-left-align" src="{{src}}" alt="">
+                <div class="mwf-li-titleblock">
+                    <h2>{{title}}{{_id}}</h2>
+                    <h3>{{addedDateString}}</h3>
+                </div>
+                <button class="mwf-imgbutton mwf-img-options-vertical mwf-right-align mwf-listitem-menu-control">
+                    Options
+                </button>
+            </li>
+        </ul>
+    </main>
+    <footer>
+        <button class="mwf-imgbutton mwf-img-refresh mwf-right-align">Refresh</button>
+    </footer>
+</div>
+
+<!--Menu view-->
+<div class="mwf-listitem-menu mwf-template mwf-databind mwf-dialog mwf-popup"
+     data-mwf-templatename="myapp-mediaItemMenu">
+    <header>
+        <h2 class="mwf-dyncontent">{{title}}{{_id}}</h2>
+    </header>
+    <main>
+        <ul>
+            <li class="mwf-li-singletitle mwf-menu-item" data-mwf-targetaction="deleteItem">Löschen</li>
+            <li class="mwf-li-singletitle mwf-menu-item" data-mwf-targetaction="editItem">Bearbeiten</li>
+        </ul>
+    </main>
+</div>
+
+<!--Dialog view-->
+<div class="mwf-view" data-mwf-viewcontroller="ListviewViewController">
+
+    <div class="mwf-template mwf-databind mwf-dialog mwf-popup mwf-view-component"
+         data-mwf-templatename="myapp-mediaItemDialogTemplate">
+        <!--        <header>-->
+        <!--            <button class="mwf-imgbutton mwf-img-sandwich mwf-left-align">Menu</button>-->
+        <!--            <h1 class="mwf-left-align">Medien</h1>-->
+        <!--            <button class="mwf-imgbutton mwf-img-plus mwf-right-align" on-click="createItem">Add</button>-->
+        <!--        </header>-->
+        <main>
+            <h2>Medium {{#if
+                item.created}}bearbeiten{{else}}hinzufügen{{/if}}</h2>
+            <form id="myapp-editviewForm" on-submit="submitForm">
+                <fieldset class="mwf-material">
+                    <input id="foo" name="{{item.title}}" required="required" type="text" autocomplete="off"
+                           placeholder="Titel" class="mwf-autofocus" value="{{item.title}}"/>
+                    <label for="foo"></label>
+                    <input class="mwf-material-altinput" type="file" on-change="showPreview" name="file"
+                           accept="image/*">
+                    <label class="mwf-material-altinput mwf-imgbutton mwf-img-camera"></label>
+                </fieldset>
+                <img src="{{item.src}}" alt=""/>
+                <div class="mwf-buttonbar">
+                    <button class="mwf-button mwf-left-align" type="button" disabled="{{#unless
+                        item.created}}disabled{{/unless}}" on-click="deleteItem">Löschen
+                    </button>
+                    <input class="mwf-button mwf-button-prio mwf-right-align" type="submit" value="{{#if
+item.created}}Ändern{{else}}Hinzufügen{{/if}}"/>
+                </div>
+            </form>
+        </main>
+    </div>
+</div>
+
+
+<!--Read view-->
+<div class="mwf-view" id="mediaReadview" data-mwf-viewcontroller="ReadviewViewController">
+    <div class="mwf-template mwf-databind" data-mwf-templatename="mediaReadviewTemplate">
+        <header>
+            <button class="mwf-imgbutton mwf-img-sandwich mwf-left-align">Menu</button>
+            <h1 class="mwf-left-align mwf-dyncontent">{{item.title}}</h1>
+            <button type="button" class="mwf-imgbutton mwf-img-delete mwf-right-align" on-click="deleteItem">Löschen
+            </button>
+        </header>
+        <main class="mwf-scrollview">
+            <img src="{{item.src}}" alt=""/>
+        </main>
+        <footer>
+            <button class="mwf-back mwf-imgbutton mwf-img-backward">Zurück</button>
+        </footer>
+    </div>
+</div>
+
+<!--Edit view-->
+<!--<div class="mwf-view" id="myapp-editview" data-mwf-viewcontroller="EditviewViewController">-->
+<!--    <div class="mwf-template mwf-databind" data-mwf-templatename="myapp-editviewTemplate">-->
+<!--        <header>-->
+<!--            <button class="mwf-imgbutton mwf-img-sandwich mwf-left-align"></button>-->
+<!--            <h1>Titel des ausgewählten Items</h1>-->
+<!--            <input type="submit" class="mwf-imgbutton mwf-img-disk mwf-right-align" form="myapp-editviewForm"-->
+<!--                   value="Speichern"/>-->
+<!--        </header>-->
+<!--        <main>-->
+<!--            <form id="myapp-editviewForm" on-submit="submitForm">-->
+<!--                <fieldset class="mwf-material">-->
+<!--                    <input name="{{item.title}}" required="required" type="text" autocomplete="off"-->
+<!--                           placeholder="Titel"/>-->
+<!--                    <input class="mwf-material-altinput" type="file" on-change="showPreview" name="file"-->
+<!--                           accept="image/*">-->
+<!--                    <label class="mwf-material-altinput mwf-imgbutton mwf-img-camera"></label>-->
+<!--                </fieldset>-->
+<!--                <img src="{{item.src}}"/>-->
+<!--            </form>-->
+<!--        </main>-->
+<!--        <footer>-->
+<!--            <button class="mwf-back mwf-imgbutton mwf-left-align mwf-img-backward"></button>-->
+<!--        </footer>-->
+<!--    </div>-->
+<!--</div>-->
+
+<div id="mwf-mapview-demo" class="mwf-view" data-mwf-viewcontroller="MapDemoViewController">
+    <header>
+        <button class="mwf-imgbutton mwf-img-sandwich mwf-left-align"></button>
+        <h1>Bildstandorte</h1>
+    </header>
+    <main class="mwf-scrollview">
+        <div id="myapp-maproot"></div>
+    </main>
+    <footer>
+        <button class="mwf-back mwf-imgbutton mwf-left-align mwf-img-backward"></button>
+    </footer>
+</div>
 </body>
 
 </html>

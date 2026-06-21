@@ -2,6 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
+      <module fileurl="file://$PROJECT_DIR$/../org.dieschnittstelle.iam.mwf.api/.idea/org.dieschnittstelle.iam.mwf.api.iml" filepath="$PROJECT_DIR$/../org.dieschnittstelle.iam.mwf.api/.idea/org.dieschnittstelle.iam.mwf.api.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/org.dieschnittstelle.iam.mwf.app.skeleton.iml" filepath="$PROJECT_DIR$/.idea/org.dieschnittstelle.iam.mwf.app.skeleton.iml" />
     </modules>
   </component>

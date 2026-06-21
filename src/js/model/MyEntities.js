@@ -22,5 +22,21 @@ export class MyEntity extends EntityManager.Entity {
 }
 
 // TODO-REPEATED: add new entity class declarations here
+export class MediaItem extends EntityManager.Entity {
+    title;
+    src;
+    added = Date.now();
+    description;
+
+    constructor(title, src, contentType) {
+        super();
+        this.title = title;
+        this.src = src;
+    }
+
+    get addedDateString() {
+        return new Date(this.added || 0).toLocaleDateString();
+    }
+}
 
 
