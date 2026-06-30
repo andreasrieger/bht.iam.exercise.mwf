@@ -27,17 +27,93 @@ export default class ListviewViewController extends mwf.ViewController {
             this.createNewItem();
         });
 
-        this.root.querySelector("#filterAll").onclick = () => {
-            this.showAllItems();
-        };
+        this.viewProxy = this.bindElement("myapp-filterTemplate", {
+            filterEnabled: false,
+            filterToggleIcon: "myapp-img-cloud",
+            filterToggleTitle: "Remote anzeigen"
+        }, this.root).viewProxy;
 
-        this.root.querySelector("#filterRemote").onclick = () => {
-            this.showRemoteItems();
-        };
+        this.viewProxy.bindAction("toggleFilter", () => {
+            if (this.filterMode === "remote") {
+                this.filterMode = "local";
 
-        this.root.querySelector("#filterLocal").onclick = () => {
-            this.showLocalItems();
-        };
+                this.viewProxy.update({
+                    filterEnabled: true,
+                    filterToggleIcon: "myapp-img-cloud",
+                    filterToggleTitle: "Remote anzeigen"
+                });
+            } else {
+                this.filterMode = "remote";
+
+                this.viewProxy.update({
+                    filterEnabled: true,
+                    filterToggleIcon: "myapp-img-drive",
+                    filterToggleTitle: "Lokal anzeigen"
+                });
+            }
+
+            this.applyFilter();
+        });
+
+        this.viewProxy.bindAction("resetFilter", () => {
+            this.filterMode = "all";
+
+            this.viewProxy.update({
+                filterEnabled: false,
+                filterToggleIcon: "myapp-img-cloud",
+                filterToggleTitle: "Remote anzeigen"
+            });
+
+            this.applyFilter();
+        });
+        // this.viewProxy = this.bindElement("myapp-listviewTemplate", {
+        //     filterEnabled: false,
+        //     filterIconClass: "mwf-img-link"
+        // }, this.root).viewProxy;
+
+        // this.viewProxy.set("filterEnabled", true);
+        // this.viewProxy.set("filterIconClass", "mwf-img-disk");
+
+        // const filterButton = this.root.querySelector("#filterRemoteLocal");
+        // const filterReset = this.root.querySelector("#filterReset");
+
+        // filterButton.onclick = () => {
+        //     if (this.filterMode === "remote") {
+        //         this.filterMode = "local";
+
+        //         filterButton.classList.remove("myapp-img-drive");
+        //         filterButton.classList.add("myapp-img-cloud");
+        //         filterButton.title = "Remote anzeigen";
+        //     } else {
+        //         this.filterMode = "remote";
+
+        //         filterButton.classList.remove("myapp-img-cloud");
+        //         filterButton.classList.add("myapp-img-drive");
+        //         filterButton.title = "Lokale anzeigen";
+        //     }
+
+        //     this.applyFilter();
+        // };
+
+        // filterReset.onclick = () => {
+        //     this.filterMode = "all";
+
+        //     filterToggle.classList.remove("myapp-img-drive");
+        //     filterToggle.classList.add("myapp-img-cloud");
+
+        //     this.applyFilter();
+        // };
+        // this.root.querySelector("#filterReset").onclick = () => {
+        //     this.showAllItems();
+        // };
+
+        // this.root.querySelector("#filterRemote").onclick = () => {
+        //     this.showRemoteItems();
+        // };
+
+        // this.root.querySelector("#filterLocal").onclick = () => {
+        //     this.showLocalItems();
+        // };
 
         entities.MediaItem.readAll().then((listitems) => {
             this.items = listitems;
@@ -111,31 +187,34 @@ export default class ListviewViewController extends mwf.ViewController {
         if (this.filterMode === "remote") {
             filteredItems = this.items.filter((item) => item.remote === true);
         }
+
         if (this.filterMode === "local") {
             filteredItems = this.items.filter((item) => item.remote !== true);
         }
+
         filteredItems.forEach((item) => {
             if (item.imgFile) {
                 item.src = URL.createObjectURL(item.imgFile);
             }
-        })
+        });
+
         this.initialiseListview(filteredItems);
     }
 
-    showAllItems() {
-        this.filterMode = "all";
-        this.applyFilter();
-    }
+    // showAllItems() {
+    //     this.filterMode = "all";
+    //     this.applyFilter();
+    // }
 
-    showRemoteItems() {
-        this.filterMode = "remote";
-        this.applyFilter();
-    }
+    // showRemoteItems() {
+    //     this.filterMode = "remote";
+    //     this.applyFilter();
+    // }
 
-    showLocalItems() {
-        this.filterMode = "local";
-        this.applyFilter();
-    }
+    // showLocalItems() {
+    //     this.filterMode = "local";
+    //     this.applyFilter();
+    // }
 
 
 

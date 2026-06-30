@@ -22,6 +22,7 @@ export default class ReadviewViewController extends mwf.ViewController {
     async oncreate() {
         // TODO: do databinding, set listeners, initialise the view
         const item = this.args.item;
+
         this.viewProxy = this.bindElement("myapp-readviewTemplate", { item: item }, this.root).viewProxy;
         this.viewProxy.bindAction("deleteItem", () => {
             this.showDialog("myapp-deleteDialogTemplate", {
@@ -32,35 +33,53 @@ export default class ReadviewViewController extends mwf.ViewController {
             });
         })
 
-
-
-        const mapRoot = this.root.querySelector(".myapp-readview-maproot");
-
-        if (mapRoot && item.exif && item.exif.GPSLatitude?.description && item.exif.GPSLongitude?.description) {
-            const coords = [
+        const coords = (item.exif &&
+            item.exif.GPSLatitude?.description &&
+            item.exif.GPSLongitude?.description)
+            ? [
                 Number(item.exif.GPSLatitude.description),
                 Number(item.exif.GPSLongitude.description)
-            ];
+            ]
+            : null;
+
+        mapMarkers.forEach((marker) => {
+            marker.marker.remove();
+        })
 
 
-            const map = L.map(mapRoot).setView(coords, 13);
-            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-                attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-            }).addTo(map);
 
-            const marker = L.marker(coords).addTo(map);
-            marker.bindPopup(item.title).openPopup();
-            // } else {
-            //     mapRoot.style.display = "none";
+        // const mapRoot = this.root.querySelector(".myapp-readview-maproot");
+
+        // if (mapRoot && item.exif && item.exif.GPSLatitude?.description && item.exif.GPSLongitude?.description) {
+        //     const coords = [
+        //         Number(item.exif.GPSLatitude.description),
+        //         Number(item.exif.GPSLongitude.description)
+        //     ];
+
+
+        //     const map = L.map(mapRoot).setView(coords, 13);
+        //     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        //         attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+        //     }).addTo(map);
+
+        //     const marker = L.marker(coords).addTo(map);
+        //     marker.bindPopup(item.title).openPopup();
+        //     // } else {
+        //     //     mapRoot.style.display = "none";
+        // }
+
+        if (coords && mapObject) {
+            mapObject.setView(coords, 13); // To do: re-center the map to chosen coords
+            L.marker(coords).addTo(mapObject);
         }
 
 
-        // if (mapRootview) {
+        if (mapRootview) {
 
-        //     console.log("this.root:" , this.root);
+            console.log("this.root:", this.root);
 
-        //     this.root.querySelector("main").appendChild(mapRootview);
-        // }
+            this.root.querySelector("main").appendChild(mapRootview);
+        }
 
         // call the superclass once creation is done
         super.oncreate();

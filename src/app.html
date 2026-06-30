@@ -58,15 +58,21 @@
                     <button class="mwf-imgbutton mwf-img-options-vertical mwf-right-align mwf-listitem-menu-control">
                         Options
                     </button>
-                    <button class="mwf-icon mwf-img-link mwf-right-align {{#if !remote}}mwf-disabled{{/if}}">Remote</button>
+                    <button
+                        class="mwf-icon mwf-right-align {{#if remote}}myapp-img-cloud{{else}}myapp-img-drive{{/if}}">Remote</button>
                 </li>
             </ul>
         </main>
-        <footer>
-            <p class="mwf-left-align">Filter:</p>
-            <button class="mwf-imgbutton mwf-img-link mwf-left-align" id="filterAll">Alle</button>
-            <button class="mwf-imgbutton mwf-img-link mwf-left-align" id="filterRemote">Remote</button>
-            <button class="mwf-imgbutton mwf-img-link mwf-left-align" id="filterLocal">Lokal</button>
+        <footer class="mwf-template mwf-databind" data-mwf-templatename="myapp-filterTemplate">
+            <button id="filterReset"
+                class="mwf-imgbutton mwf-left-align myapp-img-filter-off {{#unless filterEnabled}}mwf-disabled{{/unless}}"
+                disabled="{{#unless filterEnabled}}disabled{{/unless}}" title="Filter löschen" on-click="resetFilter">
+                Filter löschen
+            </button>
+            <button id="filterRemoteLocal" class="mwf-imgbutton mwf-left-align {{filterToggleIcon}}"
+                title="{{filterToggleTitle}}" on-click="toggleFilter">
+                Remote/Lokal
+            </button>
             <button class="mwf-imgbutton mwf-img-refresh mwf-right-align">Refresh</button>
         </footer>
     </div>
@@ -187,7 +193,7 @@ item.created}}Ändern{{else}}Hinzufügen{{/if}}" />
             </header>
             <main class="mwf-scrollview">
                 <img src="{{item.src}}" class="myapp-readview-image" alt="" />
-                <div class="myapp-readview-maproot"></div>
+                <!-- <div class="myapp-readview-maproot"></div> -->
             </main>
             <footer>
                 <button class="mwf-back mwf-imgbutton mwf-img-backward">Zurück</button>
