@@ -1,9 +1,12 @@
 /**
  * @author Jörn Kreutel
  */
-import {mwf} from "vfh-iam-mwf-base";
-import {mwfUtils} from "vfh-iam-mwf-base";
+import { mwf } from "vfh-iam-mwf-base";
+import { mwfUtils } from "vfh-iam-mwf-base";
 import * as entities from "../model/MyEntities.js";
+import { mapObject } from "./MapViewController";
+import { mapRootview } from "./MapViewController";
+import { mapMarkers } from "./MapViewController";
 
 export default class ReadviewViewController extends mwf.ViewController {
 
@@ -18,13 +21,46 @@ export default class ReadviewViewController extends mwf.ViewController {
      */
     async oncreate() {
         // TODO: do databinding, set listeners, initialise the view
-        const mediaItem = this.args.item;
-        this.viewProxy = this.bindElement("mediaReadviewTemplate", {item: mediaItem}, this.root).viewProxy;
+        const item = this.args.item;
+        this.viewProxy = this.bindElement("myapp-readviewTemplate", { item: item }, this.root).viewProxy;
         this.viewProxy.bindAction("deleteItem", () => {
-            mediaItem.delete().then(() => {
-                this.previousView({deletedItem: mediaItem});
-            })
+            this.showDialog("myapp-deleteDialogTemplate", {
+                item: item,
+                onDeleted: (deletedItem) => {
+                    this.previousView({ deletedItem }); // ES6 shorthand for the same
+                }
+            });
         })
+
+
+
+        const mapRoot = this.root.querySelector(".myapp-readview-maproot");
+
+        if (mapRoot && item.exif && item.exif.GPSLatitude?.description && item.exif.GPSLongitude?.description) {
+            const coords = [
+                Number(item.exif.GPSLatitude.description),
+                Number(item.exif.GPSLongitude.description)
+            ];
+
+
+            const map = L.map(mapRoot).setView(coords, 13);
+            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+            }).addTo(map);
+
+            const marker = L.marker(coords).addTo(map);
+            marker.bindPopup(item.title).openPopup();
+            // } else {
+            //     mapRoot.style.display = "none";
+        }
+
+
+        // if (mapRootview) {
+
+        //     console.log("this.root:" , this.root);
+
+        //     this.root.querySelector("main").appendChild(mapRootview);
+        // }
 
         // call the superclass once creation is done
         super.oncreate();
@@ -44,13 +80,6 @@ export default class ReadviewViewController extends mwf.ViewController {
     async onReturnFromNextView(nextviewid, returnValue, returnStatus) {
         // TODO: check from which view, and possibly with which status, we are returning, and handle returnValue accordingly
     }
-
-    // deleteItem(item) {
-    //     console.log("deleteItem");
-    //     item.delete(() => {
-    //         this.removeFromListview(item._id);
-    //     });
-    // }
 
     /*
      * for views with listviews: bind a list item to an item view

@@ -14,9 +14,12 @@ import * as entities from "./model/MyEntities.js";
 import MyInitialViewController from "./controller/MyInitialViewController.js";
 // TODO-REPEATED: import any further view controllers here
 import ListviewViewController from "./controller/ListviewViewController.js";
+import AddDialogViewController from "./controller/AddDialogViewController.js";
+import EditDialogViewController from "./controller/EditDialogViewController.js";
+import DeleteDialogViewController from "./controller/DeleteDialogViewController.js";
 import ReadviewViewController from "./controller/ReadviewViewController.js";
-import EditviewViewController from "./controller/EditviewViewController.js";
-import MapDemoViewController from "./controller/MapDemoViewController.js";
+import MapViewController from "./controller/MapViewController.js";
+import {SidemenuViewController} from "vfh-iam-mwf-base/src/js/mwf/mwf";
 
 // we export the framework modules required by the application and the application modules required by the framework
 mwf.app.components = {
@@ -27,9 +30,12 @@ mwf.app.components = {
     MyInitialViewController,
     // TODO-REPEATED: export any further view controllers here
     ListviewViewController,
+    AddDialogViewController,
+    EditDialogViewController,
+    DeleteDialogViewController,
     ReadviewViewController,
-    EditviewViewController,
-    MapDemoViewController
+    MapViewController,
+    SidemenuViewController
 }
 
 // then start the application

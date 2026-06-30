@@ -27,6 +27,8 @@ export class MediaItem extends EntityManager.Entity {
     src;
     added = Date.now();
     description;
+    remote = false;
+    // imgFile;
 
     constructor(title, src, contentType) {
         super();

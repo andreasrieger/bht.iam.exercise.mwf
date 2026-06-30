@@ -11,6 +11,7 @@ class MyApplication extends mwf.Application {
 
     constructor() {
         super();
+        this.keepAlive = true;
     }
 
     async oncreate() {
